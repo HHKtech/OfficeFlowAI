@@ -24,6 +24,8 @@ const config: Config = {
   testMatch: [
     "**/__tests__/**/*.test.ts",
     "**/__tests__/**/*.spec.ts",
+    "**/tests/**/*.test.ts",
+    "**/tests/**/*.spec.ts",
   ],
   // Exclude Next.js build output and node_modules
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
