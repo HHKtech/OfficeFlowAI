@@ -1,0 +1,117 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TicketStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  AWAITING_APPROVAL
+  RESOLVED
+  REJECTED
+}
+
+enum TicketCategory {
+  IT
+  FACILITIES
+  SECURITY
+}
+
+enum ApprovalStatus {
+  NOT_REQUIRED
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+/// Application-level roles. Stored in the Employee record.
+/// Authentication identity is managed by Neon Auth (neon_auth schema).
+/// Do NOT add foreign keys to neon_auth managed tables.
+enum AppRole {
+  EMPLOYEE
+  ADMIN
+}
+
+model Employee {
+  id         Int       @id @default(autoincrement())
+  /// Neon Auth user ID — links this Employee to a Neon Auth identity.
+  /// Nullable to preserve existing seeded employees until they link accounts.
+  /// NOT a foreign key into neon_auth (which is managed by Neon Auth).
+  authUserId String?   @unique
+  appRole    AppRole   @default(EMPLOYEE)
+  name       String
+  email      String    @unique
+  department String
+  role       String
+  devices    Device[]
+  tickets    Ticket[]
+}
+
+model Device {
+  id           Int      @id @default(autoincrement())
+  employeeId   Int
+  type         String
+  model        String
+  serialNumber String   @unique
+  status       String
+  employee     Employee @relation(fields: [employeeId], references: [id])
+}
+
+model OfficeAsset {
+  id           Int      @id @default(autoincrement())
+  name         String
+  type         String
+  location     String
+  status       String
+  assignedTeam String
+}
+
+model Ticket {
+  id               Int            @id @default(autoincrement())
+  employeeId       Int
+  category         TicketCategory
+  subcategory      String?
+  title            String
+  description      String
+  priority         TicketPriority
+  status           TicketStatus   @default(OPEN)
+  assignedTeam     String
+  assignedTo       String?
+  requiresApproval Boolean        @default(false)
+  approvalStatus   ApprovalStatus @default(NOT_REQUIRED)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  employee         Employee       @relation(fields: [employeeId], references: [id])
+}
+
+model Policy {
+  id       Int    @id @default(autoincrement())
+  category String
+  title    String
+  content  String
+}
+
+model AgentLog {
+  id        Int      @id @default(autoincrement())
+  requestId String
+  agent     String
+  action    String
+  tool      String
+  input     String
+  result    String
+  status    String
+  timestamp DateTime @default(now())
+}

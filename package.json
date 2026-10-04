@@ -1,0 +1,44 @@
+{
+  "name": "officeflow",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "test": "jest",
+    "test:auth": "jest lib/auth/__tests__"
+  },
+  "dependencies": {
+    "@google/genai": "^2.27.0",
+    "@neon/config": "^1.8.3",
+    "@neon/env": "^1.5.0",
+    "@neondatabase/auth": "^0.5.0-beta",
+    "@prisma/client": "^5.10.0",
+    "dotenv": "^18.0.5",
+    "next": "16.3.8",
+    "prisma": "^5.10.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "tsx": "^4.23.15",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.5.2",
+    "@tailwindcss/postcss": "^4",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.8",
+    "jest": "^30.5.2",
+    "tailwindcss": "^4",
+    "ts-jest": "^29.4.14",
+    "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}
