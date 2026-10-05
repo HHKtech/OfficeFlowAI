@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import logo from "./logo.png";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,6 +16,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "OfficeFlow AI | Workplace support",
   description: "A faster way to get workplace problems resolved.",
+  icons: {
+    icon: logo.src,
+    apple: logo.src,
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

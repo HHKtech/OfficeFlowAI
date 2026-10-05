@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth/client";
 import { DEPARTMENTS } from "@/lib/departments";
+import { BrandLogo } from "./BrandLogo";
 
 type AuthMode = "login" | "register";
 
@@ -114,7 +115,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       <div className="auth-layout mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-10 lg:grid-cols-[1fr_460px] lg:gap-20">
         <section className="auth-intro fade-up hidden lg:block">
           <Link href="/" className="mb-16 inline-flex items-center gap-3" aria-label="OfficeFlow AI home">
-            <span className="brand-gradient grid size-11 place-items-center rounded-2xl text-lg font-black text-white shadow-lg shadow-blue-200/70">O</span>
+            <BrandLogo className="size-11 rounded-2xl shadow-lg shadow-blue-200/70" priority />
             <span className="text-xl font-black tracking-tight text-slate-950">OfficeFlow <span className="brand-text">AI</span></span>
           </Link>
           <p className="mb-5 text-sm font-bold uppercase tracking-[.2em] text-blue-600">Intelligent workplace support</p>
@@ -135,7 +136,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         <section className="auth-card fade-up rounded-[2rem] border border-white/90 bg-white/90 p-6 shadow-[0_24px_80px_rgba(30,41,59,.13)] backdrop-blur-xl sm:p-9">
           <div className="mb-8 lg:hidden">
             <Link href="/" className="inline-flex items-center gap-2.5" aria-label="OfficeFlow AI home">
-              <span className="brand-gradient grid size-10 place-items-center rounded-xl text-base font-black text-white shadow-md shadow-blue-200">O</span>
+              <BrandLogo className="size-10 rounded-xl shadow-md shadow-blue-200" priority />
               <span className="text-lg font-black tracking-tight text-slate-950">OfficeFlow <span className="brand-text">AI</span></span>
             </Link>
           </div>
@@ -146,8 +147,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           </div>
 
           {checkingSession ? (
-            <div className="flex min-h-56 items-center justify-center text-sm font-semibold text-slate-500" role="status">
-              <span className="mr-3 size-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />Checking your session...
+            <div className="flex min-h-56 flex-col items-center justify-center gap-3 text-sm font-semibold text-slate-500" role="status">
+              <BrandLogo className="size-12" />
+              <div className="flex items-center">
+                <span className="mr-3 size-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />Checking your session...
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5" noValidate>
