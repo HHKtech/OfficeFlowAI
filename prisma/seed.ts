@@ -20,6 +20,56 @@ async function main() {
     });
   }
 
+  const adminEmployees = [
+    {
+      name: 'IT Admin',
+      email: 'it.admin@gmail.com',
+      previousEmail: 'it.admin@example.com',
+      department: 'Administration',
+      role: 'IT Operations Admin',
+      appRole: 'ADMIN' as const,
+    },
+    {
+      name: 'Facilities Admin',
+      email: 'facilities.admin@gmail.com',
+      previousEmail: 'facilities.admin@example.com',
+      department: 'Administration',
+      role: 'Facilities Operations Admin',
+      appRole: 'ADMIN' as const,
+    },
+    {
+      name: 'Security Admin',
+      email: 'security.admin@gmail.com',
+      previousEmail: 'security.admin@example.com',
+      department: 'Administration',
+      role: 'Security Operations Admin',
+      appRole: 'ADMIN' as const,
+    },
+  ];
+
+  for (const admin of adminEmployees) {
+    const existingAdmin = await prisma.employee.findFirst({
+      where: { email: { in: [admin.email, admin.previousEmail] } },
+    });
+
+    if (existingAdmin) {
+      await prisma.employee.update({
+        where: { id: existingAdmin.id },
+        data: { email: admin.email },
+      });
+    } else {
+      await prisma.employee.create({
+        data: {
+          name: admin.name,
+          email: admin.email,
+          department: admin.department,
+          role: admin.role,
+          appRole: admin.appRole,
+        },
+      });
+    }
+  }
+
   const ali = await prisma.employee.findUnique({ where: { email: 'ali.khan@example.com' } });
   const sara = await prisma.employee.findUnique({ where: { email: 'sara.ahmed@example.com' } });
 

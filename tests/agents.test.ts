@@ -81,6 +81,8 @@ describe("P6 – IT Agent", () => {
       const ticket = await prisma.ticket.findUnique({ where: { id: result.ticketId } });
       expect(ticket).not.toBeNull();
       expect(ticket?.category).toBe("IT");
+      expect(ticket?.assignedTeam).toBe("IT");
+      expect(ticket?.assignedTo).toBe("it.admin@example.com");
       expect(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).toContain(ticket?.priority);
       expect(new Date(ticket!.createdAt).getTime()).toBeGreaterThanOrEqual(start.getTime());
     }
@@ -159,6 +161,8 @@ describe("P7 – Facilities Agent", () => {
       const ticket = await prisma.ticket.findUnique({ where: { id: result.ticketId } });
       expect(ticket).not.toBeNull();
       expect(ticket?.category).toBe("FACILITIES");
+      expect(ticket?.assignedTeam).toBe("FACILITIES");
+      expect(ticket?.assignedTo).toBe("facilities.admin@example.com");
     }
   }, 60000);
 
@@ -232,6 +236,8 @@ describe("P8 – Security Agent", () => {
     if (result.ticketId !== null) {
       const ticket = await prisma.ticket.findUnique({ where: { id: result.ticketId } });
       expect(ticket).not.toBeNull();
+      expect(ticket?.assignedTeam).toBe("SECURITY");
+      expect(ticket?.assignedTo).toBe("security.admin@example.com");
       expect(ticket?.requiresApproval).toBe(true);
       expect(ticket?.approvalStatus).toBe("PENDING");
       expect(ticket?.status).toBe("AWAITING_APPROVAL");

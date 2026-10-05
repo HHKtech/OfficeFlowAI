@@ -4,7 +4,8 @@
  * Server-side authentication and authorization helpers for OfficeFlow AI.
  *
  * SECURITY RULES:
- * 1. Authentication is determined ONLY from Neon Auth session — never from
+ * 1. Authentication is determined ONLY from a verified Neon Auth or demo
+ *    session — never from
  *    request body, URL params, query params, or headers provided by the client.
  * 2. The Employee record is looked up using authUserId from the session —
  *    never from an employeeId supplied by the browser.
@@ -20,11 +21,24 @@
 import { auth } from "@/lib/auth/server";
 import prisma from "@/lib/db";
 import { AppRole } from "@prisma/client";
+import { cookies } from "next/headers";
+import { DEMO_SESSION_COOKIE, getDemoSessionEmail } from "@/lib/auth/demo";
 
 // Use a string constant to avoid importing the Prisma-generated AppRole enum
 // (which would fail in test environments before `prisma generate` has run).
 // The value matches the AppRole enum: "ADMIN"
 const ADMIN_ROLE = "ADMIN" as const;
+export type OperationalTeam = "IT" | "FACILITIES" | "SECURITY";
+
+const ADMIN_OPERATIONAL_TEAMS: Record<string, OperationalTeam> = {
+  "it.admin@gmail.com": "IT",
+  "facilities.admin@gmail.com": "FACILITIES",
+  "security.admin@gmail.com": "SECURITY",
+};
+
+export function getAdminOperationalTeam(email: string | null | undefined): OperationalTeam | null {
+  return email ? ADMIN_OPERATIONAL_TEAMS[email.trim().toLowerCase()] ?? null : null;
+}
 
 
 // ---------------------------------------------------------------------------
@@ -58,6 +72,7 @@ export interface AuthorizedEmployee {
     appRole: AppRole;
     authUserId: string;
   };
+  operationalTeam: OperationalTeam | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -71,6 +86,17 @@ export interface AuthorizedEmployee {
  * Returns { authenticated: false } when there is no valid session.
  */
 export async function getCurrentSession(): Promise<SessionResult> {
+  let demoEmail: string | null = null;
+  try {
+    demoEmail = getDemoSessionEmail((await cookies()).get(DEMO_SESSION_COOKIE)?.value);
+  } catch {
+    // No request cookie store is available in some server-side contexts.
+  }
+
+  if (demoEmail) {
+    return { authenticated: true, authUserId: `demo:${demoEmail}`, email: demoEmail, name: null };
+  }
+
   try {
     const { data: session, error } = await auth.getSession();
     if (error || !session?.user) {
@@ -136,20 +162,33 @@ export async function requireEmployee(): Promise<
   const authResult = await requireAuthenticatedUser();
   if (authResult instanceof Response) return authResult;
 
-  const employee = await prisma.employee.findUnique({
-    where: { authUserId: authResult.authUserId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      department: true,
-      role: true,
-      appRole: true,
-      authUserId: true,
-    },
-  });
+  const employee = authResult.authUserId.startsWith("demo:")
+    ? await prisma.employee.findFirst({
+        where: { email: authResult.email ?? "", appRole: ADMIN_ROLE },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          department: true,
+          role: true,
+          appRole: true,
+          authUserId: true,
+        },
+      })
+    : await prisma.employee.findUnique({
+        where: { authUserId: authResult.authUserId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          department: true,
+          role: true,
+          appRole: true,
+          authUserId: true,
+        },
+      });
 
-  if (!employee || !employee.authUserId) {
+  if (!employee || (!authResult.authUserId.startsWith("demo:") && !employee.authUserId)) {
     return Response.json(
       { error: "Forbidden: No employee account linked to this user." },
       { status: 403 }
@@ -162,6 +201,7 @@ export async function requireEmployee(): Promise<
     email: authResult.email,
     name: authResult.name,
     employee: employee as AuthorizedEmployee["employee"],
+    operationalTeam: employee.appRole === ADMIN_ROLE ? getAdminOperationalTeam(employee.email) : null,
   };
 }
 
@@ -197,6 +237,20 @@ export async function requireAdmin(): Promise<
   return result;
 }
 
+export async function requireAdminTeam(): Promise<AuthorizedEmployee | Response> {
+  const result = await requireAdmin();
+  if (result instanceof Response) return result;
+
+  if (!result.operationalTeam) {
+    return Response.json(
+      { error: "Forbidden: No operational team is assigned to this admin account." },
+      { status: 403 },
+    );
+  }
+
+  return result;
+}
+
 // ---------------------------------------------------------------------------
 // getEmployeeFromSession
 // ---------------------------------------------------------------------------
@@ -210,16 +264,29 @@ export async function getEmployeeFromSession() {
   const session = await getCurrentSession();
   if (!session.authenticated) return null;
 
-  return prisma.employee.findUnique({
-    where: { authUserId: session.authUserId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      department: true,
-      role: true,
-      appRole: true,
-      authUserId: true,
-    },
-  });
+  return session.authUserId.startsWith("demo:")
+    ? prisma.employee.findFirst({
+        where: { email: session.email ?? "", appRole: ADMIN_ROLE },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          department: true,
+          role: true,
+          appRole: true,
+          authUserId: true,
+        },
+      })
+    : prisma.employee.findUnique({
+        where: { authUserId: session.authUserId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          department: true,
+          role: true,
+          appRole: true,
+          authUserId: true,
+        },
+      });
 }

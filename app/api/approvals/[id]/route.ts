@@ -4,7 +4,8 @@
  * PATCH /api/approvals/[id] — Approve or reject a ticket requiring approval.
  *
  * SECURITY:
- * - Requires ADMIN role. Employees cannot approve tickets.
+ * - Requires the SECURITY ADMIN operational team. Other admins and employees
+ *   cannot approve Security tickets.
  * - The admin's identity comes from the session — never from the request body.
  * - Returns 401 if unauthenticated, 403 if not an ADMIN.
  *
@@ -12,7 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth/session";
+import { requireAdminTeam } from "@/lib/auth/session";
 import prisma from "@/lib/db";
 import { ApprovalStatus, TicketStatus } from "@prisma/client";
 
@@ -25,14 +26,34 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  // 1. Require ADMIN — 401 if unauthenticated, 403 if not admin
-  const authResult = await requireAdmin();
+  return processApproval(req, params);
+}
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  return processApproval(req, params);
+}
+
+async function processApproval(
+  req: NextRequest,
+  params: Promise<{ id: string }>,
+) {
+  // 1. Require the Security Admin team — 401 if unauthenticated, 403 otherwise
+  const authResult = await requireAdminTeam();
   if (authResult instanceof Response) return authResult;
+  if (authResult.operationalTeam !== "SECURITY") {
+    return NextResponse.json(
+      { error: "Forbidden: Security Admin approval required." },
+      { status: 403 },
+    );
+  }
 
   const { id } = await params;
-  const ticketId = parseInt(id, 10);
+  const ticketId = Number(id);
 
-  if (isNaN(ticketId)) {
+  if (!Number.isSafeInteger(ticketId) || ticketId <= 0) {
     return NextResponse.json({ error: "Invalid ticket ID." }, { status: 400 });
   }
 
@@ -53,11 +74,16 @@ export async function PATCH(
     );
   }
 
-  // 3. Find and update ticket
-  const ticket = await prisma.ticket.findUnique({
-    where: { id: ticketId },
-    select: { id: true, requiresApproval: true, approvalStatus: true },
-  });
+  // 3. Find the ticket in the Security approval workflow
+  let ticket;
+  try {
+    ticket = await prisma.ticket.findFirst({
+      where: { id: ticketId, assignedTeam: "SECURITY", category: "SECURITY" },
+      select: { id: true, requiresApproval: true, approvalStatus: true, status: true },
+    });
+  } catch {
+    return NextResponse.json({ error: "Unable to load approval." }, { status: 500 });
+  }
 
   if (!ticket) {
     return NextResponse.json({ error: "Ticket not found." }, { status: 404 });
@@ -77,15 +103,36 @@ export async function PATCH(
     );
   }
 
-  const updated = await prisma.ticket.update({
+  // The state predicates make approval one-shot even when two requests race.
+  let updateResult;
+  try {
+    updateResult = await prisma.ticket.updateMany({
+      where: {
+        id: ticketId,
+        category: "SECURITY",
+        assignedTeam: "SECURITY",
+        requiresApproval: true,
+        approvalStatus: "PENDING",
+        status: "AWAITING_APPROVAL",
+      },
+      data: {
+        approvalStatus: decision as ApprovalStatus,
+        status: decision === "APPROVED" ? TicketStatus.IN_PROGRESS : TicketStatus.REJECTED,
+      },
+    });
+  } catch {
+    return NextResponse.json({ error: "Unable to update approval." }, { status: 500 });
+  }
+
+  if (updateResult.count !== 1) {
+    return NextResponse.json(
+      { error: "Ticket is no longer awaiting approval." },
+      { status: 409 },
+    );
+  }
+
+  const updated = await prisma.ticket.findUnique({
     where: { id: ticketId },
-    data: {
-      approvalStatus: decision as ApprovalStatus,
-      status:
-        decision === "APPROVED"
-          ? TicketStatus.IN_PROGRESS
-          : TicketStatus.REJECTED,
-    },
     select: { id: true, status: true, approvalStatus: true },
   });
 

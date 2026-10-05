@@ -36,6 +36,7 @@ import {
   requireAuthenticatedUser,
   requireEmployee,
   requireAdmin,
+  getAdminOperationalTeam,
 } from "../session";
 
 const mockGetSession = auth.getSession as jest.Mock;
@@ -246,6 +247,19 @@ describe("requireAdmin", () => {
     expect(body.error).toContain("Admin");
     expect(body).not.toHaveProperty("authUserId");
     expect(body).not.toHaveProperty("sessionToken");
+  });
+});
+
+describe("admin operational team mapping", () => {
+  it("maps admin identities to operational teams", () => {
+    expect(getAdminOperationalTeam("it.admin@gmail.com")).toBe("IT");
+    expect(getAdminOperationalTeam("FACILITIES.ADMIN@GMAIL.COM")).toBe("FACILITIES");
+    expect(getAdminOperationalTeam("security.admin@gmail.com")).toBe("SECURITY");
+  });
+
+  it("does not infer a team from an unknown identity", () => {
+    expect(getAdminOperationalTeam("admin@example.com")).toBeNull();
+    expect(getAdminOperationalTeam(null)).toBeNull();
   });
 });
 

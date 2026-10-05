@@ -10,24 +10,20 @@
  * - /_next/* — Next.js build assets
  * - /favicon.ico, /public static files
  *
- * NOTE: This middleware does NOT redirect to a login page yet — that will
- * be added when the auth UI is built. Currently it only refreshes session
- * cookies so server components can read them.
+ * Protected page routes redirect unauthenticated visitors to /login.
  */
 
 import { auth } from "@/lib/auth/server";
+import { NextResponse } from "next/server";
+import { DEMO_SESSION_COOKIE } from "@/lib/auth/demo";
 
-export default auth.middleware({ loginUrl: "/auth/sign-in" });
+const neonAuthMiddleware = auth.middleware({ loginUrl: "/login" });
+
+export default function proxy(request: Parameters<typeof neonAuthMiddleware>[0]) {
+  if (request.cookies.has(DEMO_SESSION_COOKIE)) return NextResponse.next();
+  return neonAuthMiddleware(request);
+}
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths EXCEPT:
-     * - /api/auth/* (Neon Auth proxy — must be accessible without session)
-     * - /_next/static/* (static files)
-     * - /_next/image/* (image optimization)
-     * - /favicon.ico
-     */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/dashboard/:path*", "/tickets/:path*", "/request/:path*", "/admin/:path*"],
 };

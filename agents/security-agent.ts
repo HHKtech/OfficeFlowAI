@@ -279,7 +279,7 @@ Return JSON: { "incidentType": str, "riskLevel": str, "requiresApproval": bool, 
       category: "SECURITY",
       subcategory: evaluation.incidentType,
       title: evaluation.ticketTitle,
-      description: `${evaluation.ticketDescription}\n\nPolicy reference: ${JSON.stringify(policyInfo)}\nDevice info: ${JSON.stringify(deviceInfo)}`,
+      description: `${evaluation.ticketDescription}\n\nRecommended action: ${evaluation.recommendedAction}\n\nPolicy reference: ${JSON.stringify(policyInfo)}\nDevice info: ${JSON.stringify(deviceInfo)}`,
       priority: ticketPriority,
       assignedTeam: "SECURITY",
       requiresApproval: evaluation.requiresApproval, // server-side enforcement
@@ -312,7 +312,7 @@ Return JSON: { "incidentType": str, "riskLevel": str, "requiresApproval": bool, 
     try {
       const assignRes = await executeTool("assign_ticket", {
         ticketId,
-        assignedTo: "Security Team",
+        assignedTo: "security.admin@example.com",
       });
       await log(
         context.requestId,

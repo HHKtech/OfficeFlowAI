@@ -1,1 +1,3 @@
-export default function Page() { return <div>Page Content</div> }
+import { TicketsPage } from "@/components/AppShell";
+
+export default function Page() { return <TicketsPage />; }

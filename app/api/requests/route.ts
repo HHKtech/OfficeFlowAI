@@ -21,6 +21,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireEmployee } from "@/lib/auth/session";
 import { runOrchestrator } from "@/agents/orchestrator";
 import { randomUUID } from "crypto";
+import { z } from "zod";
+
+const RequestBodySchema = z.object({
+  description: z.string().trim().min(1).max(10_000),
+}).strict();
 
 export async function GET() {
   return NextResponse.json({ status: "ok" });
@@ -40,18 +45,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  if (
-    typeof body !== "object" ||
-    body === null ||
-    typeof (body as Record<string, unknown>).description !== "string"
-  ) {
-    return NextResponse.json({ error: "Missing required field: description (string)." }, { status: 400 });
+  const parsed = RequestBodySchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "description is required and must be a non-empty string of 10,000 characters or fewer." },
+      { status: 400 },
+    );
   }
 
-  const description = ((body as Record<string, unknown>).description as string).trim();
-  if (!description) {
-    return NextResponse.json({ error: "description must not be empty." }, { status: 400 });
-  }
+  const description = parsed.data.description;
 
   // 3. Generate request ID
   const requestId = randomUUID();
@@ -73,9 +75,8 @@ export async function POST(req: NextRequest) {
       requiresApproval,
       finalResponse: result.finalResponse,
     });
-  } catch (error) {
+  } catch {
     // Orchestrator itself should never throw, but belt-and-suspenders
-    console.error("[POST /api/requests] Unexpected orchestrator error:", error);
     return NextResponse.json(
       {
         requestId,

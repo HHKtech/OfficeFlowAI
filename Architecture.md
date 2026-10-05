@@ -140,6 +140,13 @@ Tools act as the secure bridge between AI Agents and the Database.
 # Required environment variables
 DATABASE_URL="postgresql://user:password@host:port/database"
 GEMINI_API_KEY="your_secure_gemini_api_key"
+NEON_AUTH_BASE_URL="https://your-neon-auth-url"
+NEON_AUTH_COOKIE_SECRET="a-long-random-server-only-secret"
+
+# Optional demo-only admin login; keep values server-side and unset outside demos.
+DEMO_IT_ADMIN_PASSWORD=""
+DEMO_FACILITIES_ADMIN_PASSWORD=""
+DEMO_SECURITY_ADMIN_PASSWORD=""
 ```
 
 ## 9. Vercel Deployment Architecture

@@ -48,15 +48,41 @@ export async function assignTicket(ticketId: number, assignedTo: string) {
 export async function updateTicketStatus(
   ticketId: number,
   status: TicketStatus,
-  approvalStatus?: ApprovalStatus
+  approvalStatus?: ApprovalStatus,
+  updates?: { priority?: TicketPriority; assignedTo?: string | null },
 ) {
   return prisma.ticket.update({
     where: { id: ticketId },
     data: {
       status,
       ...(approvalStatus ? { approvalStatus } : {}),
+      ...(updates?.priority ? { priority: updates.priority } : {}),
+      ...(updates && "assignedTo" in updates ? { assignedTo: updates.assignedTo } : {}),
     },
     select: { id: true, status: true, approvalStatus: true },
+  });
+}
+
+export async function getTicketsForEmployee(where: { employeeId?: number; assignedTeam?: string }) {
+  return prisma.ticket.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      category: true,
+      subcategory: true,
+      title: true,
+      description: true,
+      priority: true,
+      status: true,
+      assignedTeam: true,
+      assignedTo: true,
+      requiresApproval: true,
+      approvalStatus: true,
+      createdAt: true,
+      updatedAt: true,
+      employee: { select: { id: true, name: true, email: true } },
+    },
   });
 }
 

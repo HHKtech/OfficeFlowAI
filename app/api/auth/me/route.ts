@@ -24,6 +24,7 @@ export async function GET() {
       department: result.employee.department,
       role: result.employee.role,
       appRole: result.employee.appRole,
+      operationalTeam: result.operationalTeam,
     },
   });
 }

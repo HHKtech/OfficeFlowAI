@@ -349,7 +349,7 @@ Return JSON: { "needsPolicySearch": bool, "policySearchQuery": str, "finalPriori
     try {
       const assignRes = await executeTool("assign_ticket", {
         ticketId,
-        assignedTo: "IT Support Staff",
+        assignedTo: "it.admin@example.com",
       });
       await log(
         context.requestId,

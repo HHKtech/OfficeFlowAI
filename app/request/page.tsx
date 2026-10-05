@@ -1,1 +1,3 @@
-export default function Page() { return <div>Page Content</div> }
+import { RequestPage } from "@/components/AppShell";
+
+export default function Page() { return <RequestPage />; }

@@ -1,1 +1,3 @@
-export default function Page() { return <div>Page Content</div> }
+import { Dashboard } from "@/components/AppShell";
+
+export default function Page() { return <Dashboard />; }
