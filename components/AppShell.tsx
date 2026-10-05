@@ -95,7 +95,7 @@ function AccountMenu({ employee }: { employee: Employee | null | undefined }) {
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((current) => !current)}
-        className="flex max-w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left transition hover:bg-slate-100 focus:outline-none focus:ring-4 focus:ring-blue-100"
+        className="pressable flex max-w-full items-center gap-2 rounded-xl px-2 py-1.5 text-left transition hover:bg-slate-100 focus:outline-none focus:ring-4 focus:ring-blue-100"
       >
         <span className="grid size-9 shrink-0 place-items-center rounded-full bg-blue-50 text-xs font-black text-blue-700 ring-1 ring-blue-100" aria-hidden="true">{initials}</span>
         <span className="hidden min-w-0 sm:block">
@@ -124,8 +124,8 @@ function Shell({ children, employee }: { children: React.ReactNode; employee?: E
     <div className="mesh-bg min-h-screen">
       <header className="relative z-30 overflow-visible border-b border-slate-200/80 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 overflow-visible px-5 py-3 lg:flex-nowrap lg:px-8 lg:py-4">
-          <Link href="/dashboard" className="mr-auto flex min-w-0 items-center gap-2.5">
-            <BrandLogo className="size-9 rounded-xl shadow-md shadow-blue-200" priority />
+          <Link href="/dashboard" className="mr-auto flex min-w-0 items-center gap-3.5">
+            <BrandLogo className="size-18" priority />
             <span className="truncate text-lg font-black tracking-tight text-slate-900">OfficeFlow <span className="brand-text">AI</span></span>
           </Link>
           <nav className="order-3 flex w-full items-center justify-center gap-1 border-t border-slate-100 pt-2 text-sm font-semibold text-slate-500 lg:order-none lg:w-auto lg:border-0 lg:pt-0" aria-label="Primary navigation">
@@ -142,7 +142,7 @@ function Shell({ children, employee }: { children: React.ReactNode; employee?: E
             {/* {employee?.appRole !== "ADMIN" && <Link className="brand-gradient rounded-lg px-3 py-2 text-white shadow-sm shadow-blue-200 transition hover:-translate-y-0.5 sm:px-3.5" href="/request">+ New request</Link>} */}
             {employee?.appRole !== "ADMIN" && (
   <Link
-    className="relative z-10 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2 !text-white shadow-sm shadow-purple-200 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-purple-700 sm:px-3.5"
+    className="pressable relative z-10 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-3 py-2 !text-white shadow-sm shadow-purple-200 transition hover:-translate-y-0.5 hover:from-blue-700 hover:to-purple-700 sm:px-3.5"
     href="/request"
   >
     <span className="!text-white">+ New request</span>
@@ -159,7 +159,7 @@ function Shell({ children, employee }: { children: React.ReactNode; employee?: E
 }
 
 function PageState({ loading, error }: { loading: boolean; error: string }) {
-  if (loading) return <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-sm font-semibold text-slate-500"><BrandLogo className="size-12" priority /><div className="flex items-center"><span className="mr-3 size-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />Loading your workspace...</div></div>;
+  if (loading) return <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-sm font-semibold text-slate-500"><BrandLogo className="size-18" priority /><div className="flex items-center"><span className="mr-3 size-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />Loading your workspace...</div></div>;
   if (error) return <div className="mx-auto mt-16 max-w-md rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-rose-800"><p className="font-bold">Unable to open OfficeFlow</p><p className="mt-2 text-sm">{error}</p></div>;
   return null;
 }

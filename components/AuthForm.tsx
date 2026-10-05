@@ -115,7 +115,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       <div className="auth-layout mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl items-center gap-10 lg:grid-cols-[1fr_460px] lg:gap-20">
         <section className="auth-intro fade-up hidden lg:block">
           <Link href="/" className="mb-16 inline-flex items-center gap-3" aria-label="OfficeFlow AI home">
-            <BrandLogo className="size-11 rounded-2xl shadow-lg shadow-blue-200/70" priority />
+            <BrandLogo className="size-20" priority />
             <span className="text-xl font-black tracking-tight text-slate-950">OfficeFlow <span className="brand-text">AI</span></span>
           </Link>
           <p className="mb-5 text-sm font-bold uppercase tracking-[.2em] text-blue-600">Intelligent workplace support</p>
@@ -136,7 +136,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         <section className="auth-card fade-up rounded-[2rem] border border-white/90 bg-white/90 p-6 shadow-[0_24px_80px_rgba(30,41,59,.13)] backdrop-blur-xl sm:p-9">
           <div className="mb-8 lg:hidden">
             <Link href="/" className="inline-flex items-center gap-2.5" aria-label="OfficeFlow AI home">
-              <BrandLogo className="size-10 rounded-xl shadow-md shadow-blue-200" priority />
+              <BrandLogo className="size-18" priority />
               <span className="text-lg font-black tracking-tight text-slate-950">OfficeFlow <span className="brand-text">AI</span></span>
             </Link>
           </div>
@@ -148,7 +148,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
           {checkingSession ? (
             <div className="flex min-h-56 flex-col items-center justify-center gap-3 text-sm font-semibold text-slate-500" role="status">
-              <BrandLogo className="size-12" />
+              <BrandLogo className="size-18" />
               <div className="flex items-center">
                 <span className="mr-3 size-4 animate-spin rounded-full border-2 border-blue-200 border-t-blue-600" />Checking your session...
               </div>
@@ -162,7 +162,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
               {isRegister && <div><label htmlFor="department" className="mb-2 block text-sm font-bold text-slate-800">Department</label><select id="department" name="department" value={department} onChange={(event) => setDepartment(event.target.value)} required className="h-12 w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 text-sm text-slate-900 outline-none transition hover:border-slate-300 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100"><option value="" disabled>Select your department</option>{DEPARTMENTS.map((option) => <option key={option} value={option}>{option}</option>)}</select></div>}
               {isRegister && <Field id="role" label="Job role" type="text" value={role} onChange={setRole} autoComplete="organization-title" placeholder="Developer" required />}
               {error && <p className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium leading-5 text-rose-700" role="alert">{error}</p>}
-              <button type="submit" disabled={loading} className="brand-gradient flex h-12 w-full items-center justify-center rounded-xl text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0">
+              <button type="submit" disabled={loading} className="pressable brand-gradient flex h-12 w-full items-center justify-center rounded-xl text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-200 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0">
                 {loading && <span className="mr-2 size-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
                 {loading ? (isRegister ? "Creating account..." : "Signing in...") : (isRegister ? "Create account" : "Sign in")}
               </button>

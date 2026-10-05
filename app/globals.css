@@ -29,6 +29,53 @@ button, textarea, select { font: inherit; }
 
 .brand-gradient { background: linear-gradient(115deg, var(--blue), var(--purple) 54%, var(--pink)); }
 .brand-text { background: linear-gradient(115deg, var(--blue), var(--purple) 54%, var(--pink)); background-clip: text; color: transparent; }
+.pressable { transition: transform .2s ease, box-shadow .2s ease, filter .2s ease, background-color .2s ease, color .2s ease; }
+.pressable:active { transform: scale(.97); filter: brightness(.96); box-shadow: 0 5px 12px rgba(30, 41, 59, .14); }
 .mesh-bg { background: radial-gradient(circle at 92% 0%, rgba(124, 58, 237, .12), transparent 32%), radial-gradient(circle at 0% 16%, rgba(37, 99, 235, .10), transparent 28%), var(--background); }
 .fade-up { animation: fade-up .45s ease both; }
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.landing-page { background: radial-gradient(circle at 75% 7%, rgba(124, 58, 237, .11), transparent 26%), radial-gradient(circle at 9% 18%, rgba(37, 99, 235, .09), transparent 25%), #f8fafc; }
+.landing-nav { position: relative; z-index: 10; background: rgba(248, 250, 252, .72); backdrop-filter: blur(18px); }
+.landing-reveal { animation: landing-reveal .8s cubic-bezier(.16, 1, .3, 1) both; }
+.landing-delay-1 { animation-delay: .05s; } .landing-delay-2 { animation-delay: .12s; } .landing-delay-3 { animation-delay: .2s; } .landing-delay-4 { animation-delay: .3s; } .landing-delay-5 { animation-delay: .4s; }
+@keyframes landing-reveal { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.section-kicker { color: #2563eb; font-size: .7rem; font-weight: 900; letter-spacing: .2em; text-transform: uppercase; }
+.section-title { margin-top: .8rem; color: #0f172a; font-size: clamp(2.4rem, 5vw, 4.5rem); font-weight: 900; letter-spacing: -.055em; line-height: 1; }
+.section-copy { margin-top: 1.5rem; color: #64748b; font-size: 1.05rem; line-height: 1.8; }
+.scroll-reveal { opacity: 0; transform: translateY(35px); transition: opacity .8s cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms), transform .8s cubic-bezier(.22, 1, .36, 1) var(--reveal-delay, 0ms); }
+.scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.scroll-reveal-stagger > * { opacity: 0; transform: translateY(16px); transition: opacity .8s cubic-bezier(.22, 1, .36, 1), transform .8s cubic-bezier(.22, 1, .36, 1); }
+.scroll-reveal.is-visible .scroll-reveal-stagger > * { opacity: 1; transform: translateY(0); }
+.scroll-reveal.is-visible .scroll-reveal-stagger > *:nth-child(2) { transition-delay: 100ms; }
+.scroll-reveal.is-visible .scroll-reveal-stagger > *:nth-child(3) { transition-delay: 180ms; }
+.scroll-reveal.is-visible .scroll-reveal-stagger > *:nth-child(4) { transition-delay: 260ms; }
+.landing-page > section:nth-of-type(n + 2), .landing-footer { opacity: 0; transform: translateY(18px); transition: opacity .8s cubic-bezier(.16, 1, .3, 1), transform .8s cubic-bezier(.16, 1, .3, 1); }
+.landing-page > section:nth-of-type(n + 2).is-visible, .landing-footer.is-visible { opacity: 1; transform: translateY(0); }
+.landing-page > section:nth-of-type(n + 2) > div > div { opacity: 0; transform: translateY(16px); transition: opacity .8s cubic-bezier(.22, 1, .36, 1), transform .8s cubic-bezier(.22, 1, .36, 1); }
+.landing-page > section:nth-of-type(n + 2).is-visible > div > div { opacity: 1; transform: translateY(0); }
+.landing-page > section:nth-of-type(n + 2).is-visible > div > div:nth-child(2) { transition-delay: 100ms; }
+.landing-page > section:nth-of-type(n + 2).is-visible > div > div:nth-child(3) { transition-delay: 180ms; }
+.landing-page > section:nth-of-type(n + 2).is-visible > div > div:nth-child(4) { transition-delay: 260ms; }
+.workflow-grid { position: absolute; inset: 3% 0; background-image: linear-gradient(rgba(37, 99, 235, .06) 1px, transparent 1px), linear-gradient(90deg, rgba(37, 99, 235, .06) 1px, transparent 1px); background-size: 34px 34px; mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent); }
+.workflow-halo { position: absolute; top: 16%; left: 30%; width: 46%; aspect-ratio: 1; border-radius: 999px; background: radial-gradient(circle, rgba(124, 58, 237, .2), rgba(37, 99, 235, .05) 48%, transparent 70%); filter: blur(4px); animation: halo-pulse 4s ease-in-out infinite; }
+@keyframes halo-pulse { 50% { transform: scale(1.08); opacity: .7; } }
+.workflow-card, .workflow-agent, .workflow-approval { position: absolute; display: flex; align-items: center; gap: .75rem; border: 1px solid rgba(226, 232, 240, .9); background: rgba(255, 255, 255, .88); box-shadow: 0 18px 45px rgba(30, 41, 59, .1); backdrop-filter: blur(12px); }
+.workflow-card { left: 6%; top: 4%; width: min(88%, 360px); padding: 1rem 1.1rem; border-radius: 1.15rem; animation: card-in 1s .5s both; }
+.workflow-icon { display: grid; width: 2.25rem; height: 2.25rem; flex-shrink: 0; place-items: center; border-radius: .75rem; font-size: .7rem; font-weight: 900; }
+.workflow-orchestrator { position: absolute; top: 28%; left: 50%; transform: translateX(-50%); animation: card-in 1s .75s both; }
+.workflow-orb { position: relative; display: grid; width: 7.4rem; height: 7.4rem; place-items: center; border-radius: 999px; background: linear-gradient(135deg, #2563eb, #7c3aed 58%, #e11d48); box-shadow: 0 0 0 12px rgba(124, 58, 237, .08), 0 20px 45px rgba(79, 70, 229, .28); }
+.workflow-agent { width: 170px; padding: .8rem; border-radius: 1rem; animation: card-in 1s both; }
+.workflow-agent-it { left: 1%; top: 60%; animation-delay: 1s; } .workflow-agent-facilities { left: 50%; top: 60%; transform: translateX(-50%); animation-delay: 1.15s; } .workflow-agent-security { right: 1%; top: 60%; animation-delay: 1.3s; }
+.workflow-approval { bottom: 2%; left: 12%; width: 76%; padding: .8rem 1rem; border-color: rgba(225, 29, 72, .18); animation: card-in 1s 1.5s both; }
+.workflow-line { position: absolute; z-index: 0; height: 2px; transform-origin: left center; background: linear-gradient(90deg, #93c5fd, #a78bfa); opacity: .65; overflow: hidden; }
+.workflow-line::after { position: absolute; left: -20%; width: 20%; height: 100%; background: white; box-shadow: 0 0 12px white; content: ""; animation: line-flow 2.4s linear infinite; }
+.workflow-line-main { top: 23%; left: 50%; height: 36%; width: 2px; background: linear-gradient(#93c5fd, #a78bfa); } .workflow-line-left { top: 57%; left: 50%; width: 29%; transform: rotate(155deg); } .workflow-line-center { top: 57%; left: 50%; width: 10%; transform: rotate(90deg); } .workflow-line-right { top: 57%; left: 50%; width: 29%; transform: rotate(25deg); } .workflow-line-approval { top: 76%; left: 50%; width: 30%; transform: rotate(90deg); background: #fda4af; }
+@keyframes line-flow { to { left: 120%; } } @keyframes card-in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.workflow-agent-facilities { animation-name: agent-center-in; } @keyframes agent-center-in { from { opacity: 0; transform: translateX(-50%) translateY(12px) scale(.96); } to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } }
+.agent-blue { border-color: #dbeafe; } .agent-purple { border-color: #ede9fe; } .agent-pink { border-color: #ffe4e6; }
+.agent-mark { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: .8rem; color: white; font-size: .75rem; font-weight: 900; } .agent-mark-blue { background: #2563eb; } .agent-mark-purple { background: #7c3aed; } .agent-mark-pink { background: #e11d48; }
+.agent-bar-blue { background: #2563eb; } .agent-bar-purple { background: #7c3aed; } .agent-bar-pink { background: #e11d48; }
+.step-connector { position: absolute; top: 1.6rem; left: calc(50% + 4rem); color: #cbd5e1; font-weight: 900; }
+@media (max-width: 767px) { .workflow-agent { width: 132px; } .workflow-agent p { white-space: nowrap; } .workflow-orb { width: 6.2rem; height: 6.2rem; } .workflow-line-left { width: 25%; } .workflow-line-right { width: 25%; } .step-connector { display: none; } }
+@media (max-width: 1100px) and (min-width: 768px) { .landing-page > section:first-of-type { padding-top: 2rem; padding-bottom: 3rem; } .landing-page > section:first-of-type .relative.min-h-\[500px\] { min-height: 440px; } }
+@media (prefers-reduced-motion: reduce) { .landing-reveal, .scroll-reveal, .scroll-reveal-stagger > *, .landing-page > section:nth-of-type(n + 2), .landing-footer, .workflow-halo, .workflow-card, .workflow-orchestrator, .workflow-agent, .workflow-approval, .workflow-line::after { animation: none; transition: none; opacity: 1; transform: none; } }

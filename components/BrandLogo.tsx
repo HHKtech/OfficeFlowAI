@@ -6,7 +6,7 @@ type BrandLogoProps = {
   priority?: boolean;
 };
 
-export function BrandLogo({ className = "size-10", priority = false }: BrandLogoProps) {
+export function BrandLogo({ className = "size-12", priority = false }: BrandLogoProps) {
   return (
     <Image
       src={logo}
